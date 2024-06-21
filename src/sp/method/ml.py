@@ -1,5 +1,5 @@
-from src.sp.problem_functions.att_functions import *
-from src.sp.problem_functions.functions_milp import *
+from sp.problem_functions.att_functions import *
+from sp.problem_functions.functions_milp import *
 
 from datetime import datetime
 import numpy as np
@@ -98,9 +98,10 @@ def algorithm(K, env, att_series=None, max_level=None, success_model_name=None, 
     new_xi_num = len(scen_all) - 1
     from_trash = False
     # K-branch and bound algorithm
+    k_new = None
     now = datetime.now().time()
     print("Instance S {}: started at {}".format(env.inst_num, now))
-    while (N_set or N_set_trash) and time.time() - start_time < time_limit:
+    while (N_set or N_set_trash or k_new is not None) and time.time() - start_time < time_limit:
         # MASTER PROBLEM
         if new_model:
             tot_nodes += 1
@@ -134,6 +135,7 @@ def algorithm(K, env, att_series=None, max_level=None, success_model_name=None, 
             placement[k_new].append(new_xi_num)
             tau = {k: scen_all[placement[k]] for k in np.arange(K)}
 
+        k_new = None
         # prune if theta higher than current robust theta
         if theta - theta_i > -1e-8:
             prune_count += 1

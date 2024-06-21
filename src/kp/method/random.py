@@ -1,6 +1,6 @@
 import os
 
-from src.kp.problem_functions.functions_milp import *
+from kp.problem_functions.functions_milp import *
 
 from datetime import datetime
 import gurobipy as gp
@@ -57,7 +57,7 @@ def algorithm(K, env, time_limit=30*60, print_info=True, problem_type="test"):
     new_xi_num = 0
 
     print(f"Instance R {env.inst_num}: started at {now}")
-    while N_set and time.time() - start_time < time_limit:
+    while (N_set or k_new is not None) and time.time() - start_time < time_limit:
         # MASTER PROBLEM
         if new_model:
             tot_nodes += 1
@@ -81,6 +81,7 @@ def algorithm(K, env, time_limit=30*60, print_info=True, problem_type="test"):
             placement[k_new].append(new_xi_num)
             tau = {k: scen_all[placement[k]] for k in range(K)}
 
+        k_new = None
         # prune if theta higher than current robust theta
         if theta - theta_i < 1e-8:
             prune_count += 1
